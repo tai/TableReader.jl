@@ -9,7 +9,7 @@ using Dates:
 using Unicode:
     isletter
 using DataFrames:
-    DataFrame!
+    DataFrame
 using TranscodingStreams:
     TranscodingStreams,
     TranscodingStream,
@@ -427,7 +427,7 @@ function readdlm_internal(stream::TranscodingStream, params::LexerParameters)
     _, i, _ = scanline!(tokens, 1, mem, 0, line, params)
     if i == 1 && location(tokens[1,1])[2] == 0
         # no data
-        return DataFrame!([[] for _ in 1:length(colnames)], colnames, makeunique = true)
+        return DataFrame([[] for _ in 1:length(colnames)], colnames, copycols = false, makeunique = true)
     elseif i == ncols
         # the header and the first row have the same number of columns
     elseif i == ncols + 1
@@ -546,7 +546,7 @@ function readdlm_internal(stream::TranscodingStream, params::LexerParameters)
         colnames = [normalizename(String(name)) for name in colnames]
     end
 
-    return DataFrame!(columns, colnames, makeunique = true)
+    return DataFrame(columns, colnames, copycols = false, makeunique = true)
 end
 
 # Count the number of `byte` in a memory block.
@@ -785,7 +785,7 @@ function _precompile_()
     precompile(Tuple{typeof(TableReader.scanheader), TranscodingStreams.Memory, TableReader.LexerParameters})
     precompile(Tuple{typeof(TableReader.bufferlines), TranscodingStreams.TranscodingStream{TranscodingStreams.Noop, Base.IOStream}})
     precompile(Tuple{typeof(TableReader.checkformat), Base.IOStream})
-    precompile(Tuple{getfield(TableReader, Symbol("##24#29")), Base.Process})
+    precompile(Tuple{getfield(TableReader, Symbol("#24#29")), Base.Process})
     precompile(Tuple{typeof(TableReader.skipcommentlines), TranscodingStreams.TranscodingStream{TranscodingStreams.Noop, Base.IOStream}, String})
     precompile(Tuple{typeof(TableReader.skipblanklines), TranscodingStreams.TranscodingStream{TranscodingStreams.Noop, Base.IOStream}, Bool})
     precompile(Tuple{typeof(TableReader.fillcolumn!), Array{Int64, 1}, Int64, TranscodingStreams.Memory, Array{TableReader.Token, 2}, Int64, UInt8})
@@ -800,7 +800,7 @@ function _precompile_()
     precompile(Tuple{typeof(TableReader.wrapstream), Base.Process, TableReader.LexerParameters})
     precompile(Tuple{typeof(TableReader.wrapstream), Base.IOStream, TableReader.LexerParameters})
     precompile(Tuple{typeof(TableReader.checkformat), Base.Process})
-    precompile(Tuple{getfield(TableReader, Symbol("##25#30")), Base.IOStream})
+    precompile(Tuple{getfield(TableReader, Symbol("#25#30")), Base.IOStream})
     precompile(Tuple{typeof(TableReader.allocate!), TableReader.StringCache, Ptr{UInt8}, Int64})
     precompile(Tuple{typeof(TableReader.fillcolumn!), Array{String, 1}, Int64, TranscodingStreams.Memory, Array{TableReader.Token, 2}, Int64, UInt8})
     precompile(Tuple{typeof(TableReader.is_date_like), Array{String, 1}})
@@ -813,8 +813,8 @@ function _precompile_()
     precompile(Tuple{typeof(TableReader.skiplines), TranscodingStreams.TranscodingStream{TranscodingStreams.Noop, Base.IOStream}, Int64})
     precompile(Tuple{getfield(TableReader, Symbol("##readtsv#23")), Char, Char, Bool, Bool, Int64, Bool, String, Nothing, Bool, Bool, Int64, Nothing, typeof(TableReader.readtsv), String})
     precompile(Tuple{typeof(TableReader.normalizename), String})
-    precompile(Tuple{getfield(TableReader, Symbol("##15#20")), Base.Process})
-    precompile(Tuple{getfield(TableReader, Symbol("##16#21")), Base.IOStream})
+    precompile(Tuple{getfield(TableReader, Symbol("#15#20")), Base.Process})
+    precompile(Tuple{getfield(TableReader, Symbol("#16#21")), Base.IOStream})
     precompile(Tuple{typeof(TableReader.readcsv), String})
     precompile(Tuple{typeof(TableReader.readtsv), String})
 end

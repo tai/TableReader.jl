@@ -10,7 +10,7 @@ using Test
         """)
         df = readtsv(buffer)
         @test eof(buffer)
-        @test names(df) == [:col1]
+        @test propertynames(df) == [:col1]
         @test size(df) == (0, 1)
 
         buffer = IOBuffer("""
@@ -18,7 +18,7 @@ using Test
         """)
         df = readtsv(buffer)
         @test eof(buffer)
-        @test names(df) == [:col1, :col2, :col3]
+        @test propertynames(df) == [:col1, :col2, :col3]
         @test size(df) == (0, 3)
 
         # integers
@@ -29,10 +29,10 @@ using Test
         """)
         df = readtsv(buffer)
         @test eof(buffer)
-        @test names(df) == [:col1, :col2, :col3]
-        @test df[:col1] == [1, -10]
-        @test df[:col2] == [23, -99]
-        @test df[:col3] == [456, 0]
+        @test propertynames(df) == [:col1, :col2, :col3]
+        @test df[!, :col1] == [1, -10]
+        @test df[!, :col2] == [23, -99]
+        @test df[!, :col3] == [456, 0]
 
         # floats
         buffer = IOBuffer("""
@@ -44,10 +44,10 @@ using Test
         """)
         df = readtsv(buffer)
         @test eof(buffer)
-        @test names(df) == [:col1, :col2, :col3]
-        @test df[:col1] == [1.0, -1.2, 0.000, 1e3]
-        @test df[:col2] == [1.1, 0.0, 0.123, 1e123]
-        @test df[:col3] == [12.34, -9.0, 100.000, -8.2]
+        @test propertynames(df) == [:col1, :col2, :col3]
+        @test df[!, :col1] == [1.0, -1.2, 0.000, 1e3]
+        @test df[!, :col2] == [1.1, 0.0, 0.123, 1e123]
+        @test df[!, :col3] == [12.34, -9.0, 100.000, -8.2]
 
         # bools
         buffer = IOBuffer("""
@@ -61,9 +61,9 @@ using Test
         """)
         df = readtsv(buffer)
         @test eof(buffer)
-        @test names(df) == [:col1, :col2]
-        @test df[:col1] == [true, true, true, true, true, true]
-        @test df[:col2] == [false, false, false, false, false, false]
+        @test propertynames(df) == [:col1, :col2]
+        @test df[!, :col1] == [true, true, true, true, true, true]
+        @test df[!, :col2] == [false, false, false, false, false, false]
 
         # strings
         buffer = IOBuffer("""
@@ -73,10 +73,10 @@ using Test
         """)
         df = readtsv(buffer)
         @test eof(buffer)
-        @test names(df) == [:col1, :col2, :col3]
-        @test df[:col1] == ["a", "foo"]
-        @test df[:col2] == ["b", "bar"]
-        @test df[:col3] == ["c", "baz"]
+        @test propertynames(df) == [:col1, :col2, :col3]
+        @test df[!, :col1] == ["a", "foo"]
+        @test df[!, :col2] == ["b", "bar"]
+        @test df[!, :col3] == ["c", "baz"]
 
         # dates
         buffer = IOBuffer("""
@@ -85,10 +85,10 @@ using Test
         """)
         df = readtsv(buffer)
         @test eof(buffer)
-        @test names(df) == [:col1, :col2, :col3]
-        @test df[:col1] == [Date(2015, 12, 21)]
-        @test df[:col2] == [Date(2019, 1, 1)]
-        @test df[:col3] == [Date(1999, 9, 11)]
+        @test propertynames(df) == [:col1, :col2, :col3]
+        @test df[!, :col1] == [Date(2015, 12, 21)]
+        @test df[!, :col2] == [Date(2019, 1, 1)]
+        @test df[!, :col3] == [Date(1999, 9, 11)]
 
         # datetimes
         buffer = IOBuffer("""
@@ -97,10 +97,10 @@ using Test
         """)
         df = readtsv(buffer)
         @test eof(buffer)
-        @test names(df) == [:col1, :col2, :col3]
-        @test df[:col1] == [DateTime(2015, 12, 21, 0, 0, 0)]
-        @test df[:col2] == [DateTime(2015, 12, 21, 11, 22, 33)]
-        @test df[:col3] == [DateTime(2015, 12, 21, 11, 22, 33, 444)]
+        @test propertynames(df) == [:col1, :col2, :col3]
+        @test df[!, :col1] == [DateTime(2015, 12, 21, 0, 0, 0)]
+        @test df[!, :col2] == [DateTime(2015, 12, 21, 11, 22, 33)]
+        @test df[!, :col3] == [DateTime(2015, 12, 21, 11, 22, 33, 444)]
 
         # datetimes (delimited by space)
         buffer = IOBuffer("""
@@ -109,10 +109,10 @@ using Test
         """)
         df = readtsv(buffer)
         @test eof(buffer)
-        @test names(df) == [:col1, :col2, :col3]
-        @test df[:col1] == [DateTime(2015, 12, 21, 0, 0, 0)]
-        @test df[:col2] == [DateTime(2015, 12, 21, 11, 22, 33)]
-        @test df[:col3] == [DateTime(2015, 12, 21, 11, 22, 33, 444)]
+        @test propertynames(df) == [:col1, :col2, :col3]
+        @test df[!, :col1] == [DateTime(2015, 12, 21, 0, 0, 0)]
+        @test df[!, :col2] == [DateTime(2015, 12, 21, 11, 22, 33)]
+        @test df[!, :col3] == [DateTime(2015, 12, 21, 11, 22, 33, 444)]
     end
 
     @testset "tricky float" begin
@@ -123,10 +123,10 @@ using Test
         -nan\t+Nan\t-NaN\t+NAN
         """)
         df = readtsv(buffer)
-        @test all(isnan.(df[:col1]))
-        @test all(isnan.(df[:col2]))
-        @test all(isnan.(df[:col3]))
-        @test all(isnan.(df[:col4]))
+        @test all(isnan.(df[!, :col1]))
+        @test all(isnan.(df[!, :col2]))
+        @test all(isnan.(df[!, :col3]))
+        @test all(isnan.(df[!, :col4]))
 
         # Inf
         buffer = IOBuffer("""
@@ -137,10 +137,10 @@ using Test
         -infinity\t+Infinity\t-InFiNiTy\t+INFINITY
         """)
         df = readtsv(buffer)
-        @test all(isinf.(df[:col1]))
-        @test all(isinf.(df[:col2]))
-        @test all(isinf.(df[:col3]))
-        @test all(isinf.(df[:col4]))
+        @test all(isinf.(df[!, :col1]))
+        @test all(isinf.(df[!, :col2]))
+        @test all(isinf.(df[!, :col3]))
+        @test all(isinf.(df[!, :col4]))
     end
 
     @testset "quotation" begin
@@ -150,9 +150,9 @@ using Test
         "-10"\t"-99"\t"0"
         """
         df = readtsv(IOBuffer(data))
-        @test df[:col1] == [1, -10]
-        @test df[:col2] == [23, -99]
-        @test df[:col3] == [456, 0]
+        @test df[!, :col1] == [1, -10]
+        @test df[!, :col2] == [23, -99]
+        @test df[!, :col3] == [456, 0]
 
         # floats
         buffer = IOBuffer("""
@@ -164,10 +164,10 @@ using Test
         """)
         df = readtsv(buffer)
         @test eof(buffer)
-        @test names(df) == [:col1, :col2, :col3]
-        @test df[:col1] == [1.0, -1.2, 0.000, 1e3]
-        @test df[:col2] == [1.1, 0.0, 0.123, 1e123]
-        @test df[:col3] == [12.34, -9.0, 100.000, -8.2]
+        @test propertynames(df) == [:col1, :col2, :col3]
+        @test df[!, :col1] == [1.0, -1.2, 0.000, 1e3]
+        @test df[!, :col2] == [1.1, 0.0, 0.123, 1e123]
+        @test df[!, :col3] == [12.34, -9.0, 100.000, -8.2]
 
         # strings
         buffer = IOBuffer("""
@@ -177,10 +177,10 @@ using Test
         """)
         df = readtsv(buffer)
         @test eof(buffer)
-        @test names(df) == [:col1, :col2, :col3]
-        @test df[:col1] == ["a", "foo"]
-        @test df[:col2] == ["b", "bar"]
-        @test df[:col3] == ["c", "baz"]
+        @test propertynames(df) == [:col1, :col2, :col3]
+        @test df[!, :col1] == ["a", "foo"]
+        @test df[!, :col2] == ["b", "bar"]
+        @test df[!, :col3] == ["c", "baz"]
 
         buffer = IOBuffer("""
         col1\tcol2\tcol3
@@ -188,9 +188,9 @@ using Test
         foo\tbar\tbaz
         """)
         df = readtsv(buffer)
-        @test df[:col1] == ["foo", "foo"]
-        @test df[:col2] == ["bar", "bar"]
-        @test df[:col3] == ["baz", "baz"]
+        @test df[!, :col1] == ["foo", "foo"]
+        @test df[!, :col2] == ["bar", "bar"]
+        @test df[!, :col3] == ["baz", "baz"]
 
         # quotation marks in a quoted string
         buffer = IOBuffer("""
@@ -198,8 +198,8 @@ using Test
         " ""OK"" "\t"\""OK"\""
         """)
         df = readtsv(buffer)
-        @test df[:col1] == [" \"OK\" "]
-        @test df[:col2] == ["\"OK\""]
+        @test df[!, :col1] == [" \"OK\" "]
+        @test df[!, :col2] == ["\"OK\""]
     end
 
     @testset "trimming" begin
@@ -211,33 +211,33 @@ using Test
           7 \t 8  \t 9  
         """
         df = readtsv(IOBuffer(data))
-        @test df[:col1] == [1, 4, 7]
-        @test df[:col2] == [2, 5, 8]
-        @test df[:col3] == [3, 6, 9]
+        @test df[!, :col1] == [1, 4, 7]
+        @test df[!, :col2] == [2, 5, 8]
+        @test df[!, :col3] == [3, 6, 9]
 
         df = readtsv(IOBuffer(data); trim = true)
-        @test df[:col1] == [1, 4, 7]
-        @test df[:col2] == [2, 5, 8]
-        @test df[:col3] == [3, 6, 9]
+        @test df[!, :col1] == [1, 4, 7]
+        @test df[!, :col2] == [2, 5, 8]
+        @test df[!, :col3] == [3, 6, 9]
 
         df = readtsv(IOBuffer(data); trim = false)
-        @test df[:col1] == ["1   ", "   4", "  7 "]
-        @test df[:col2] == ["   2", "   5", " 8  "]
-        @test df[:col3] == ["   3", "   6", " 9  "]
+        @test df[!, :col1] == ["1   ", "   4", "  7 "]
+        @test df[!, :col2] == ["   2", "   5", " 8  "]
+        @test df[!, :col3] == ["   3", "   6", " 9  "]
 
         data = """
          col1  \t col2 \t col3  
          foo   \t  b  \t baz
         """
         df = readtsv(IOBuffer(data); trim = true)
-        @test df[:col1] == ["foo"]
-        @test df[:col2] == ["b"]
-        @test df[:col3] == ["baz"]
+        @test df[!, :col1] == ["foo"]
+        @test df[!, :col2] == ["b"]
+        @test df[!, :col3] == ["baz"]
 
         df = readtsv(IOBuffer(data); trim = false)
-        @test df[Symbol(" col1  ")] == [" foo   "]
-        @test df[Symbol(" col2 ")] == ["  b  "]
-        @test df[Symbol(" col3  ")] == [" baz"]
+        @test df[!, Symbol(" col1  ")] == [" foo   "]
+        @test df[!, Symbol(" col2 ")] == ["  b  "]
+        @test df[!, Symbol(" col3  ")] == [" baz"]
     end
 
     @testset "missing" begin
@@ -247,9 +247,9 @@ using Test
         \t5\t
         """
         df = readtsv(IOBuffer(data))
-        @test df[:col1] isa Vector{Union{Int,Missing}}
-        @test df[:col2] isa Vector{Int}
-        @test df[:col3] isa Vector{Union{Int,Missing}}
+        @test df[!, :col1] isa Vector{Union{Int,Missing}}
+        @test df[!, :col2] isa Vector{Int}
+        @test df[!, :col3] isa Vector{Union{Int,Missing}}
         @test df[1,:col1] == 1
         @test ismissing(df[2,:col1])
         @test df[1,:col2] == 2
@@ -263,9 +263,9 @@ using Test
         \t10\t
         """
         df = readtsv(IOBuffer(data))
-        @test df[:col1] isa Vector{Union{Float64,Missing}}
-        @test df[:col2] isa Vector{Float64}
-        @test df[:col3] isa Vector{Union{Float64,Missing}}
+        @test df[!, :col1] isa Vector{Union{Float64,Missing}}
+        @test df[!, :col2] isa Vector{Float64}
+        @test df[!, :col3] isa Vector{Union{Float64,Missing}}
         @test df[1,:col1] == 1.0
         @test ismissing(df[2,:col1])
         @test df[1,:col2] == 2.2
@@ -279,9 +279,9 @@ using Test
         baz\tqux\t
         """
         df = readtsv(IOBuffer(data))
-        @test df[:col1] isa Vector{String}
-        @test df[:col2] isa Vector{Union{String,Missing}}
-        @test df[:col3] isa Vector{Union{String,Missing}}
+        @test df[!, :col1] isa Vector{String}
+        @test df[!, :col2] isa Vector{Union{String,Missing}}
+        @test df[!, :col3] isa Vector{Union{String,Missing}}
         @test df[1,:col1] == "foo"
         @test df[2,:col1] == "baz"
         @test ismissing(df[1,:col2])
@@ -331,8 +331,8 @@ using Test
         $(typemax(Int))\t$(typemin(Int))
         """
         df = readtsv(IOBuffer(data))
-        @test df[:col1] == [typemax(Int)]
-        @test df[:col2] == [typemin(Int)]
+        @test df[!, :col1] == [typemax(Int)]
+        @test df[!, :col2] == [typemin(Int)]
 
         # not supported
         data = """
@@ -375,9 +375,9 @@ using Test
         👌\t😀😀😀\t🐸🐓
         """
         df = readtsv(IOBuffer(data))
-        @test df[:col1] == ["甲", "👌"]
-        @test df[:col2] == ["乙", "😀😀😀"]
-        @test df[:col3] == ["丙", "🐸🐓"]
+        @test df[!, :col1] == ["甲", "👌"]
+        @test df[!, :col2] == ["乙", "😀😀😀"]
+        @test df[!, :col3] == ["丙", "🐸🐓"]
     end
 
     @testset "CR+LF" begin
@@ -387,9 +387,9 @@ using Test
         4\t5\t6 \r
         """
         df = readtsv(IOBuffer(data))
-        @test df[:col1] == [1, 4]
-        @test df[:col2] == [2, 5]
-        @test df[:col3] == [3, 6]
+        @test df[!, :col1] == [1, 4]
+        @test df[!, :col2] == [2, 5]
+        @test df[!, :col3] == [3, 6]
 
         data = """
         col1\tcol2\tcol3\r
@@ -397,9 +397,9 @@ using Test
         4.0\t5.0\t6.0 \r
         """
         df = readtsv(IOBuffer(data))
-        @test df[:col1] == [1.0, 4.0]
-        @test df[:col2] == [2.0, 5.0]
-        @test df[:col3] == [3.0, 6.0]
+        @test df[!, :col1] == [1.0, 4.0]
+        @test df[!, :col2] == [2.0, 5.0]
+        @test df[!, :col3] == [3.0, 6.0]
 
         data = """
         col1\tcol2\tcol3\r
@@ -407,16 +407,16 @@ using Test
         hoge\tfuga\tpiyo \r
         """
         df = readtsv(IOBuffer(data))
-        @test df[:col1] == ["foo", "hoge"]
-        @test df[:col2] == ["bar", "fuga"]
-        @test df[:col3] == ["baz", "piyo"]
+        @test df[!, :col1] == ["foo", "hoge"]
+        @test df[!, :col2] == ["bar", "fuga"]
+        @test df[!, :col3] == ["baz", "piyo"]
     end
 
     @testset "CR" begin
         data = """col1\tcol2\r123\t456\r"""
         df = readtsv(IOBuffer(data))
-        @test df[:col1] == [123]
-        @test df[:col2] == [456]
+        @test df[!, :col1] == [123]
+        @test df[!, :col2] == [456]
     end
 
     @testset "blank lines" begin
@@ -429,8 +429,8 @@ using Test
         3\t4
         """
         df = readtsv(IOBuffer(data))
-        @test df[:col1] == [1, 3]
-        @test df[:col2] == [2, 4]
+        @test df[!, :col1] == [1, 3]
+        @test df[!, :col2] == [2, 4]
 
         # after header
         data = """
@@ -441,8 +441,8 @@ using Test
         3\t4
         """
         df = readtsv(IOBuffer(data))
-        @test df[:col1] == [1, 3]
-        @test df[:col2] == [2, 4]
+        @test df[!, :col1] == [1, 3]
+        @test df[!, :col2] == [2, 4]
 
         # among data
         data = """
@@ -453,8 +453,8 @@ using Test
         3\t4
         """
         df = readtsv(IOBuffer(data))
-        @test df[:col1] == [1, 3]
-        @test df[:col2] == [2, 4]
+        @test df[!, :col1] == [1, 3]
+        @test df[!, :col2] == [2, 4]
 
         # end of a file
         data = """
@@ -465,8 +465,8 @@ using Test
 
         """
         df = readtsv(IOBuffer(data))
-        @test df[:col1] == [1, 3]
-        @test df[:col2] == [2, 4]
+        @test df[!, :col1] == [1, 3]
+        @test df[!, :col2] == [2, 4]
     end
 
     @testset "invalid argument" begin
@@ -490,38 +490,38 @@ using Test
         # with chunking
         df = readtsv(IOBuffer(data))
         @test size(df) == (m, n + 1)
-        @test df[:name] == ["row$(i)" for i in 1:m]
-        @test df[:col1] == 1:m
-        @test df[:col2] == 1:m
+        @test df[!, :name] == ["row$(i)" for i in 1:m]
+        @test df[!, :col1] == 1:m
+        @test df[!, :col2] == 1:m
 
         # without chunking
         df = readtsv(IOBuffer(data), chunkbits = 0)
         @test size(df) == (m, n + 1)
-        @test df[:name] == ["row$(i)" for i in 1:m]
-        @test df[:col1] == 1:m
-        @test df[:col2] == 1:m
+        @test df[!, :name] == ["row$(i)" for i in 1:m]
+        @test df[!, :col1] == 1:m
+        @test df[!, :col2] == 1:m
     end
 
     @testset "from file" begin
         df = readtsv(joinpath(@__DIR__, "test.tsv"))
-        @test df[:col1] == [1, 2]
-        @test df[:col2] == [1.0, 2.0]
-        @test df[:col3] == ["one", "two"]
+        @test df[!, :col1] == [1, 2]
+        @test df[!, :col2] == [1.0, 2.0]
+        @test df[!, :col3] == ["one", "two"]
 
         df = readtsv(joinpath(@__DIR__, "test.tsv.gz"))
-        @test df[:col1] == [1, 2]
-        @test df[:col2] == [1.0, 2.0]
-        @test df[:col3] == ["one", "two"]
+        @test df[!, :col1] == [1, 2]
+        @test df[!, :col2] == [1.0, 2.0]
+        @test df[!, :col3] == ["one", "two"]
 
         df = readtsv(joinpath(@__DIR__, "test.tsv.zst"))
-        @test df[:col1] == [1, 2]
-        @test df[:col2] == [1.0, 2.0]
-        @test df[:col3] == ["one", "two"]
+        @test df[!, :col1] == [1, 2]
+        @test df[!, :col2] == [1.0, 2.0]
+        @test df[!, :col3] == ["one", "two"]
 
         df = readtsv(joinpath(@__DIR__, "test.tsv.xz"))
-        @test df[:col1] == [1, 2]
-        @test df[:col2] == [1.0, 2.0]
-        @test df[:col3] == ["one", "two"]
+        @test df[!, :col1] == [1, 2]
+        @test df[!, :col2] == [1.0, 2.0]
+        @test df[!, :col3] == ["one", "two"]
     end
 end
 
@@ -535,10 +535,10 @@ end
         """)
         df = readcsv(buffer)
         @test eof(buffer)
-        @test names(df) == [:col1, :col2, :col3]
-        @test df[:col1] == [1, -10]
-        @test df[:col2] == [23, -99]
-        @test df[:col3] == [456, 0]
+        @test propertynames(df) == [:col1, :col2, :col3]
+        @test df[!, :col1] == [1, -10]
+        @test df[!, :col2] == [23, -99]
+        @test df[!, :col3] == [456, 0]
 
         # floats
         buffer = IOBuffer("""
@@ -550,10 +550,10 @@ end
         """)
         df = readcsv(buffer)
         @test eof(buffer)
-        @test names(df) == [:col1, :col2, :col3]
-        @test df[:col1] == [1.0, -1.2, 0.000, 1e3]
-        @test df[:col2] == [1.1, 0.0, 0.123, 1e123]
-        @test df[:col3] == [12.34, -9.0, 100.000, -8.2]
+        @test propertynames(df) == [:col1, :col2, :col3]
+        @test df[!, :col1] == [1.0, -1.2, 0.000, 1e3]
+        @test df[!, :col2] == [1.1, 0.0, 0.123, 1e123]
+        @test df[!, :col3] == [12.34, -9.0, 100.000, -8.2]
 
         # strings
         buffer = IOBuffer("""
@@ -563,10 +563,10 @@ end
         """)
         df = readcsv(buffer)
         @test eof(buffer)
-        @test names(df) == [:col1, :col2, :col3]
-        @test df[:col1] == ["a", "foo"]
-        @test df[:col2] == ["b", "bar"]
-        @test df[:col3] == ["c", "baz"]
+        @test propertynames(df) == [:col1, :col2, :col3]
+        @test df[!, :col1] == ["a", "foo"]
+        @test df[!, :col2] == ["b", "bar"]
+        @test df[!, :col3] == ["c", "baz"]
     end
 
     @testset "no header" begin
@@ -575,24 +575,24 @@ end
         a,b,c
         """
         df = readcsv(IOBuffer(data))
-        @test df[:A] == ["a"]
-        @test df[:B] == ["b"]
-        @test df[:C] == ["c"]
+        @test df[!, :A] == ["a"]
+        @test df[!, :B] == ["b"]
+        @test df[!, :C] == ["c"]
 
         df = readcsv(IOBuffer(data), hasheader = false)
-        @test df[:X1] == ["A", "a"]
-        @test df[:X2] == ["B", "b"]
-        @test df[:X3] == ["C", "c"]
+        @test df[!, :X1] == ["A", "a"]
+        @test df[!, :X2] == ["B", "b"]
+        @test df[!, :X3] == ["C", "c"]
 
         df = readcsv(IOBuffer(data), colnames = [:C1, :C2, :C3])
-        @test df[:C1] == ["A", "a"]
-        @test df[:C2] == ["B", "b"]
-        @test df[:C3] == ["C", "c"]
+        @test df[!, :C1] == ["A", "a"]
+        @test df[!, :C2] == ["B", "b"]
+        @test df[!, :C3] == ["C", "c"]
 
         df = readcsv(IOBuffer(data), colnames = [:C1, :C2, :C3], hasheader = true)
-        @test df[:C1] == ["a"]
-        @test df[:C2] == ["b"]
-        @test df[:C3] == ["c"]
+        @test df[!, :C1] == ["a"]
+        @test df[!, :C2] == ["b"]
+        @test df[!, :C3] == ["c"]
     end
 
     @testset "quotation" begin
@@ -602,8 +602,8 @@ end
         "1,2,3,4", ",,,"
         """
         df = readcsv(IOBuffer(data))
-        @test df[:col1] == ["hi, there", "1,2,3,4"]
-        @test df[:col2] == [",", ",,,"]
+        @test df[!, :col1] == ["hi, there", "1,2,3,4"]
+        @test df[!, :col2] == [",", ",,,"]
     end
 
     @testset "missing" begin
@@ -631,8 +631,8 @@ end
         "
         """
         df = readcsv(IOBuffer(data))
-        @test df[:col1] == ["oh,\nthere\nthere"]
-        @test df[:col2] == ["\nmulti\nline\nfield\n"]
+        @test df[!, :col1] == ["oh,\nthere\nthere"]
+        @test df[!, :col2] == ["\nmulti\nline\nfield\n"]
     end
 
     @testset "leading-zero string" begin
@@ -644,16 +644,16 @@ end
         0123,123
         """
         df = readcsv(IOBuffer(data))  # lzstring = true by default
-        @test df[:col1] == ["0000", "0001", "0002", "0123"]
-        @test df[:col2] == [0, 1, 2, 123]
+        @test df[!, :col1] == ["0000", "0001", "0002", "0123"]
+        @test df[!, :col2] == [0, 1, 2, 123]
 
         df = readcsv(IOBuffer(data), lzstring = true)
-        @test df[:col1] == ["0000", "0001", "0002", "0123"]
-        @test df[:col2] == [0, 1, 2, 123]
+        @test df[!, :col1] == ["0000", "0001", "0002", "0123"]
+        @test df[!, :col2] == [0, 1, 2, 123]
 
         df = readcsv(IOBuffer(data), lzstring = false)
-        @test df[:col1] == [0, 1, 2, 123]
-        @test df[:col2] == [0, 1, 2, 123]
+        @test df[!, :col1] == [0, 1, 2, 123]
+        @test df[!, :col2] == [0, 1, 2, 123]
 
         data = """
         col1
@@ -661,13 +661,13 @@ end
         00.4
         """
         df = readcsv(IOBuffer(data))  # lzstring = true by default
-        @test df[:col1] == ["0.3", "00.4"]
+        @test df[!, :col1] == ["0.3", "00.4"]
 
         df = readcsv(IOBuffer(data), lzstring = true)
-        @test df[:col1] == ["0.3", "00.4"]
+        @test df[!, :col1] == ["0.3", "00.4"]
 
         df = readcsv(IOBuffer(data), lzstring = false)
-        @test df[:col1] == [0.3, 0.4]
+        @test df[!, :col1] == [0.3, 0.4]
     end
 
     @testset "EOF without newline" begin
@@ -675,8 +675,8 @@ end
         col1,col2
         1,2"""
         df = readcsv(IOBuffer(data))
-        @test df[:col1] == [1]
-        @test df[:col2] == [2]
+        @test df[!, :col1] == [1]
+        @test df[!, :col2] == [2]
     end
 
     @testset "unnamed column" begin
@@ -685,10 +685,10 @@ end
         1,foo,3,bar
         """
         df = readcsv(IOBuffer(data))
-        @test df[:col1] == [1]
-        @test df[:UNNAMED_2] == ["foo"]
-        @test df[:col3] == [3]
-        @test df[:UNNAMED_4] == ["bar"]
+        @test df[!, :col1] == [1]
+        @test df[!, :UNNAMED_2] == ["foo"]
+        @test df[!, :col3] == [3]
+        @test df[!, :UNNAMED_4] == ["bar"]
     end
 
     @testset "implicit column" begin
@@ -697,10 +697,10 @@ end
         foo,1,2,3
         """
         df = readcsv(IOBuffer(data))
-        @test df[:UNNAMED_0] == ["foo"]
-        @test df[:col1] == [1]
-        @test df[:col2] == [2]
-        @test df[:col3] == [3]
+        @test df[!, :UNNAMED_0] == ["foo"]
+        @test df[!, :col1] == [1]
+        @test df[!, :col2] == [2]
+        @test df[!, :col3] == [3]
     end
 
     @testset "skip lines" begin
@@ -711,9 +711,9 @@ end
         1,2,3
         """
         df = readcsv(IOBuffer(data), skip = 2)
-        @test df[:col1] == [1]
-        @test df[:col2] == [2]
-        @test df[:col3] == [3]
+        @test df[!, :col1] == [1]
+        @test df[!, :col2] == [2]
+        @test df[!, :col3] == [3]
     end
 
     @testset "comment" begin
@@ -727,8 +727,8 @@ end
         # comment after data
         """
         df = readcsv(IOBuffer(data), comment = "#")
-        @test df[:col1] == [1, 3]
-        @test df[:col2] == [2, 4]
+        @test df[!, :col1] == [1, 3]
+        @test df[!, :col2] == [2, 4]
 
         data = """
         ## comment before header
@@ -740,8 +740,8 @@ end
         ## comment after data
         """
         df = readcsv(IOBuffer(data), comment = "##")
-        @test df[:col1] == ["foo", "#foo"]
-        @test df[:col2] == ["bar", "#bar"]
+        @test df[!, :col1] == ["foo", "#foo"]
+        @test df[!, :col2] == ["bar", "#bar"]
 
         @test_throws ArgumentError("comment cannot contain newline characters") readcsv(IOBuffer(data), comment = "\n")
         @test_throws ArgumentError("comment cannot contain newline characters") readcsv(IOBuffer(data), comment = "\r")
@@ -761,24 +761,24 @@ end
 
     @testset "from file" begin
         df = readcsv(joinpath(@__DIR__, "test.csv"))
-        @test df[:col1] == [1, 2]
-        @test df[:col2] == [1.0, 2.0]
-        @test df[:col3] == ["one", "two"]
+        @test df[!, :col1] == [1, 2]
+        @test df[!, :col2] == [1.0, 2.0]
+        @test df[!, :col3] == ["one", "two"]
 
         df = readcsv(joinpath(@__DIR__, "test.csv.gz"))
-        @test df[:col1] == [1, 2]
-        @test df[:col2] == [1.0, 2.0]
-        @test df[:col3] == ["one", "two"]
+        @test df[!, :col1] == [1, 2]
+        @test df[!, :col2] == [1.0, 2.0]
+        @test df[!, :col3] == ["one", "two"]
 
         df = readcsv(joinpath(@__DIR__, "test.csv.zst"))
-        @test df[:col1] == [1, 2]
-        @test df[:col2] == [1.0, 2.0]
-        @test df[:col3] == ["one", "two"]
+        @test df[!, :col1] == [1, 2]
+        @test df[!, :col2] == [1.0, 2.0]
+        @test df[!, :col3] == ["one", "two"]
 
         df = readcsv(joinpath(@__DIR__, "test.csv.xz"))
-        @test df[:col1] == [1, 2]
-        @test df[:col2] == [1.0, 2.0]
-        @test df[:col3] == ["one", "two"]
+        @test df[!, :col1] == [1, 2]
+        @test df[!, :col2] == [1.0, 2.0]
+        @test df[!, :col3] == ["one", "two"]
     end
 
     @testset "from command" begin
@@ -786,8 +786,8 @@ end
             @info "skip tests: echo command is not found"
         else
             df = readcsv(`echo $("col1,col2\n1,2")`)
-            @test df[:col1] == [1]
-            @test df[:col2] == [2]
+            @test df[!, :col1] == [1]
+            @test df[!, :col2] == [2]
         end
 
         if Sys.which("cat") === nothing || Sys.which("gzip") === nothing
@@ -795,9 +795,9 @@ end
         else
             testfile = joinpath(@__DIR__, "test.csv")
             df = readcsv(pipeline(`cat $(testfile)`, `gzip`))
-            @test df[:col1] == [1, 2]
-            @test df[:col2] == [1.0, 2.0]
-            @test df[:col3] == ["one", "two"]
+            @test df[!, :col1] == [1, 2]
+            @test df[!, :col2] == [1.0, 2.0]
+            @test df[!, :col3] == ["one", "two"]
         end
     end
 
@@ -819,8 +819,8 @@ end
         end
         seekstart(buf)
         df = readcsv(buf)
-        @test df[:col1] isa Vector{String}
-        @test df[:col2] isa Vector{Union{String,Missing}}
+        @test df[!, :col1] isa Vector{String}
+        @test df[!, :col2] isa Vector{Union{String,Missing}}
     end
 
     @testset "repeated variable names" begin
@@ -829,7 +829,7 @@ end
             1,2
             """
             df = readcsv(IOBuffer(data))
-            @test df[:col1_1] == [2]
+            @test df[!, :col1_1] == [2]
     end
 
     @testset "no quotation" begin
@@ -838,9 +838,9 @@ end
         "foo","bar","baz"
         """
         df = readcsv(IOBuffer(data), quot = nothing)
-        @test df[:col1] == ["\"foo\""]
-        @test df[:col2] == ["\"bar\""]
-        @test df[:col3] == ["\"baz\""]
+        @test df[!, :col1] == ["\"foo\""]
+        @test df[!, :col2] == ["\"bar\""]
+        @test df[!, :col3] == ["\"baz\""]
 
         data = """
         col1,\xffcol2,col3
@@ -862,7 +862,7 @@ end
         2,2018-04-10T08:19:30.000
         """)
         df = readcsv(buf)
-        @test df[:col1] == [1, 2]
+        @test df[!, :col1] == [1, 2]
         @test ismissing(df[1,:col2])
         @test df[2,:col2] == DateTime(2018, 4, 10, 8, 19, 30)
     end
@@ -876,9 +876,9 @@ end
         1|2|3
         """
         df = readdlm(IOBuffer(data), delim = '|')
-        @test df[:col1] == [1]
-        @test df[:col2] == [2]
-        @test df[:col3] == [3]
+        @test df[!, :col1] == [1]
+        @test df[!, :col2] == [2]
+        @test df[!, :col3] == [3]
 
         # quoted by `
         data = """
@@ -886,9 +886,9 @@ end
         `foo`,`bar`,`baz`
         """
         df = readdlm(IOBuffer(data), delim = ',', quot = '`')
-        @test df[:col1] == ["foo"]
-        @test df[:col2] == ["bar"]
-        @test df[:col3] == ["baz"]
+        @test df[!, :col1] == ["foo"]
+        @test df[!, :col2] == ["bar"]
+        @test df[!, :col3] == ["baz"]
 
         # invalid chunkbits
         @test_throws ArgumentError readdlm(IOBuffer(""), delim = ',', chunkbits = -1)
@@ -902,9 +902,9 @@ end
         1,2,3
         """
         df = readdlm(IOBuffer(data))
-        @test df[:col1] == [1]
-        @test df[:col2] == [2]
-        @test df[:col3] == [3]
+        @test df[!, :col1] == [1]
+        @test df[!, :col2] == [2]
+        @test df[!, :col3] == [3]
 
         # tab delimited
         data = """
@@ -912,9 +912,9 @@ end
         1\t2\t3
         """
         df = readdlm(IOBuffer(data))
-        @test df[:col1] == [1]
-        @test df[:col2] == [2]
-        @test df[:col3] == [3]
+        @test df[!, :col1] == [1]
+        @test df[!, :col2] == [2]
+        @test df[!, :col3] == [3]
 
         # pipe delimited
         data = """
@@ -922,9 +922,9 @@ end
         1|2|3
         """
         df = readdlm(IOBuffer(data))
-        @test df[:col1] == [1]
-        @test df[:col2] == [2]
-        @test df[:col3] == [3]
+        @test df[!, :col1] == [1]
+        @test df[!, :col2] == [2]
+        @test df[!, :col3] == [3]
     end
 end
 
@@ -936,7 +936,7 @@ end
         1,2,3,4,5,6,7
         """)
         df = readcsv(buffer,normalizenames=true)
-        @test names(df) == [:col_1, :col_2, :col_3,:col4,:_do,:α,:_col7]
+        @test propertynames(df) == [:col_1, :col_2, :col_3,:col4,:_do,:α,:_col7]
     end
     @testset "don't normalize" begin
         buffer = IOBuffer("""
@@ -944,7 +944,7 @@ end
         1,2,3,4,5,6,7
         """)
         df = readcsv(buffer,normalizenames=false)
-        @test names(df) == [Symbol("col.1"), Symbol("col|2"), Symbol("col\$3"), :col4, :do, :α, :_col7]
+        @test propertynames(df) == [Symbol("col.1"), Symbol("col|2"), Symbol("col\$3"), :col4, :do, :α, :_col7]
     end
 end
 
@@ -953,9 +953,9 @@ end
         @info "Skipped file downloading tests"
     else
         df = readcsv("https://raw.githubusercontent.com/bicycle1885/TableReader.jl/master/test/test.csv")
-        @test df[:col1] == [1, 2]
-        @test df[:col2] == [1.0, 2.0]
-        @test df[:col3] == ["one", "two"]
+        @test df[!, :col1] == [1, 2]
+        @test df[!, :col2] == [1.0, 2.0]
+        @test df[!, :col3] == ["one", "two"]
     end
 end
 
@@ -970,9 +970,9 @@ function testfield(s::String, expected)
       $(s)  ,  $(s)  ,  $(s)  
     """
     df = readcsv(IOBuffer(data))
-    x1, x2 = df[:col1]
-    y1, y2 = df[:col2]
-    z1, z2 = df[:col3]
+    x1, x2 = df[!, :col1]
+    y1, y2 = df[!, :col2]
+    z1, z2 = df[!, :col3]
     sametype = typeof(x1) == typeof(x2) ==
                typeof(y1) == typeof(y2) ==
                typeof(z1) == typeof(z2) ==
@@ -1134,7 +1134,7 @@ end
         1,2
         """
         df = readcsv(IOBuffer(data), chunksize = 0)
-        @test df[:col1] == [1]
-        @test df[:col2] == [2]
+        @test df[!, :col1] == [1]
+        @test df[!, :col2] == [2]
     end
 end
